@@ -42,7 +42,7 @@ router.post("/",(req,res)=>{
 
 router.put("/:id",(req, res)=>{
   const date = new Date()
-  File.updateOne({id:req.params.id},{content:req.body.content, lastModified: date}).then(()=>{
+  File.updateOne({_id:req.params.id},{content:req.body.content, lastModified: date}).then(()=>{
     res.json({result : true})
   })
 })
@@ -51,25 +51,45 @@ router.put("/:id",(req, res)=>{
 
 router.put("title/:id",(req, res)=>{
   const date = new Date()
-  File.updateOne({id:req.params.id},{title : req.body.title, lastModified:date}).then(()=>{
+  File.updateOne({_id:req.params.id},{title : req.body.title, lastModified:date}).then(()=>{
     res.json({result:true, message:"title modified"})
   })
 })
 
-//PUT : update active assistants for a file
+//PUT :add active assistants for a file found by ID
 
 router.put("addAssistant/:id",(req, res)=>{
   const date = new Date()
   const newAssistant = {assistant: req.body.assistantId, degreeOfIntervention : 2}
-  File.updateOne({id:req.params.id},{$push:{activeAssistants: newAssistant}, lastModified:date }).then(()=>{
+  File.updateOne({_id:req.params.id},{$push:{activeAssistants: newAssistant}, lastModified:date }).then(()=>{
     res.json({result : true, newAssistant : newAssistant})
   })
 })
 
-
+//PUT : remove active assistant for a file by ID
 router.put("removeAssistant/:id",(req,res)=>{
   const date = new Date();
-  File.updateOne({id:req.params.id},{lastModified:date,})
+  const assistantToRemoveId = req.body.assistantId
+  File.updateOne({_id:req.params.id},{lastModified:date, $pull:{activeAssistants:{_id:assistantToRemoveId}}}).then(()=>{
+    res.json({result:true, removedAssistant : assistantToRemoveId})
+  })
 })
+
+
+//PUT : change Assistant force of intervention in a document
+
+router.put("changeForce/:id",(req,res)=>{
+  const date = new Date();
+  const assistantToChange = req.body.assistantId;
+  const force = req.body.force
+
+  File.updateOne({_id:req.params.id,"activeAssistants.assistant": assistantToChange},{$set:{
+    "activeAssistants.$.degreeOfIntervention":force,
+    lastModified:date
+  }}).then(()=>{
+    res.json({result:true})
+  })
+})
+
 
 module.exports = router
