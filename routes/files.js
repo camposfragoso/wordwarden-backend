@@ -11,23 +11,30 @@ var router = express.Router()
 //POST : create a new file
 
 router.post("/",(req,res)=>{
-  User.findOne({token : req.body.token}).then(data =>{
-    const author = data.id;
+  File.find({title : req.body.title}).then((data)=>{
+    if(data!==null){
+
+      User.findOne({token : req.body.token}).then(data =>{
+        const author = data.id;
+        
+        const newFile = new File({
+          content : req.body.content,
+          author : author,
+          title : req.body.title,
+          locatedIn : req.body.path,
+          activeAssistants : data.defaultActiveAssistants
     
-    const newFile = new File({
-      content : req.body.content,
-      author : author,
-      title : req.body.title,
-      locatedIn : req.body.path,
-      activeAssistants : data.defaultActiveAssistants
-
-    })
-
-    newFile.save().then(()=>{
-      File.find({title : req.body.title}).then(data=>{
-        res.json({result : true, title : data.title})
+        })
+    
+        newFile.save().then(()=>{
+          File.find({title : req.body.title}).then(data=>{
+            res.json({result : true, title : data.title})
+          })
+        })
       })
-    })
+    }else{
+      res.json({result : false, error:"already existing file with same title"})
+    }
   })
 })
 
