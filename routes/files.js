@@ -38,6 +38,28 @@ router.post("/",(req,res)=>{
   })
 })
 
+
+//GET : get collection infos of all of one user’s files
+
+router.get("/:userId",(req, res)=>{
+  File.findById(req.params.userId).then((data)=>{
+    if(data===null){
+      res.json({result : false, error:"could not find files for this user"})
+    }else{
+      const array = data.map(el=>{
+        return {
+          creationDate : el.creationDate,
+          title : el.title,
+          activeAssistants : el.activeAssistants,
+          lastModified:el.lastModified,
+          contentLength : el.content.length
+        }
+      })
+      res.json({result:true, data:array})
+    }
+  })
+})
+
 //PUT : modify content of a file for every modification
 
 router.put("/:id",(req, res)=>{
@@ -90,6 +112,34 @@ router.put("changeForce/:id",(req,res)=>{
     res.json({result:true})
   })
 })
+
+
+//DELETE : delete one file, acording to id
+
+router.delete("/:id",(req,res)=>{
+  File.deleteOne({_id:req.params.id}).then((data)=>{
+    console.log(data)
+    if(data.ackcnowlegded===true){
+      res.json({result:true})
+    }else{
+      res.json({result:false, error:"no document deleted"})
+    }
+  })
+})
+
+
+//DELETE : delete all files from 1 user
+router.delete("/",(req, res)=>{
+  File.deleteMany({author : req.body.authorId}).then((data)=>{
+    console.log(data)
+    if(data.ackcnowlegded===true){
+      res.json({result : true})
+    }else{
+      res.json({result:false,error : "couldn’t delete documents"})
+    }
+  })
+})
+
 
 
 module.exports = router
