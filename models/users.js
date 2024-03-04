@@ -2,12 +2,19 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
   username: String,
-  activeSince : Date,
+  activeSince : { type: Date, default: Date.now },
   fieldOfWork : String,
   email : String,
   password: String,
   token: String,
-  defaultActiveAssistants : [{ type: mongoose.Schema.Types.ObjectId, ref: 'assistants' }]
+  style : {
+    fontStyle : {type : String, default : "Garamond"},
+    fontSize : {type : Number, default : 2}
+  },
+  defaultActiveAssistants : [{
+    assistant: { type: mongoose.Schema.Types.ObjectId, ref: 'assistants' },
+    degreeOfIntervention: Number
+  }]
 });
 
 const User = mongoose.model('users', userSchema);
