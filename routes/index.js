@@ -9,11 +9,13 @@ router.get('/', function(req, res, next) {
 
 router.post('/mistral', async (req, res, next) => {
   try {
-      const result = await mistral(req.body.answer);
-      res.json(result);
+      const devil = await mistral('devilsAdvocate', req.body.answer);
+      const sum = await mistral('summarizer', req.body.answer);
+      res.json({ devil, sum });
   } catch (error) {
       next(error);
   }
 });
+
 
 module.exports = router;

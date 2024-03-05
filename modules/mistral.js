@@ -2,10 +2,18 @@ const path = require('path');
 
 let LlamaModel, LlamaGrammar, LlamaContext, LlamaChatSession, LlamaJsonSchemaGrammar;
 
-async function mistral(input) {
+async function mistral(taskType, input) {
 
-    const devilsAdvocate = `You're an assistant writing a text alongside the user. Your task is to analyze the text provided by the user and create a JSON file where each entry is structured with two key components: 'excerpt' and 'proposition'. For each entry, the 'excerpt' key should contain a direct quote from the text, and the 'proposition' key should contain a devil's advocate proposition that challenges or offers an alternative viewpoint to the idea presented in the excerpt. The proposition should be thought-provoking, encouraging a deeper examination of the subject matter, and articulated clearly as a standalone sentence.`;
-    const summarizer = `You are an assistant tasked with analyzing a text provided by the user. Your objective is to evaluate each sentence for complexity and verbosity. Create a JSON object where each entry corresponds to a sentence from the text. Structure each entry with four key components: 'sentence', 'complexity', 'verbosity', and 'simplified_version'. For the 'sentence' key, include the exact text of the sentence. For the 'complexity' key, indicate whether the sentence is 'simple', 'moderate', or 'complex'. For the 'verbosity' key, determine if the sentence is 'concise', 'balanced', or 'verbose'. The 'simplified_version' key should contain a more concise and straightforward version of the original sentence, reducing complexity and verbosity while retaining the core meaning. This analysis should help the user identify how to make their text clearer and more accessible.`
+    const prompts = {
+        devilsAdvocate: `You're an assistant writing a text alongside the user. Your task is to analyze the text provided by the user and create a JSON file where each entry is structured with two key components: 'excerpt' and 'proposition'. For each entry, the 'excerpt' key should contain a direct quote from the text, and the 'proposition' key should contain a devil's advocate proposition that challenges or offers an alternative viewpoint to the idea presented in the excerpt. The proposition should be thought-provoking, encouraging a deeper examination of the subject matter, and articulated clearly as a standalone sentence.`,
+        summarizer: `You are an assistant tasked with analyzing a text provided by the user. Your objective is to evaluate each sentence for complexity and verbosity. Create a JSON object where each entry corresponds to a sentence from the text, structured with two key components: 'excerpt' and 'proposition'. For the 'excerpt' key, include the exact text of the sentence. For the 'proposition' key, provide a simplified version of the sentence that reduces its complexity and verbosity while maintaining the original meaning. This simplification should serve as a direct, actionable suggestion to help the user make their text clearer and more accessible.`
+    };
+
+    const selectedPrompt = prompts[taskType];
+
+    if (!selectedPrompt) {
+        throw new Error('Invalid task type specified');
+    }
 
 	if (!LlamaModel || !LlamaGrammar || !LlamaContext || !LlamaChatSession || !LlamaJsonSchemaGrammar || !LlamaChatPromptWrapper) {
         const llama = await import('node-llama-cpp');
@@ -37,7 +45,8 @@ async function mistral(input) {
             "additionalProperties": false
         }
     });
-        
+
+
       const context = new LlamaContext({ model, batchSize: 4096 });
     
         class MyCustomChatPromptWrapper extends LlamaChatPromptWrapper {
@@ -48,7 +57,7 @@ async function mistral(input) {
     
         wrapPrompt(prompt) {
            
-          return `SYSTEM: ${devilsAdvocate} \n USER: ${prompt} \n ASSISTANT:`;
+          return `SYSTEM: ${selectedPrompt} \n USER: ${prompt} \n ASSISTANT:`;
         }
     
         getStopStrings() {
