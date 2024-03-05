@@ -15,6 +15,10 @@
     "mongoose": "^8.2.0",
     "morgan": "~1.9.1",
     "node-fetch": "2",
+<<<<<<< HEAD
     "uid2": "^1.0.0"
+=======
+    "node-llama-cpp": "^2.8.8"
+>>>>>>> a07bcd706e69b4710d4627c78b607d3a6bf63985
   }
 }
