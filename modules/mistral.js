@@ -5,8 +5,9 @@ let LlamaModel, LlamaGrammar, LlamaContext, LlamaChatSession, LlamaJsonSchemaGra
 async function mistral(taskType, input) {
 
     const prompts = {
-        devilsAdvocate: `You're an assistant writing a text alongside the user. Your task is to analyze the text provided by the user and create a JSON file where each entry is structured with two key components: 'excerpt' and 'proposition'. For each entry, the 'excerpt' key should contain a direct quote from the text, and the 'proposition' key should contain a devil's advocate proposition that challenges or offers an alternative viewpoint to the idea presented in the excerpt. The proposition should be thought-provoking, encouraging a deeper examination of the subject matter, and articulated clearly as a standalone sentence.`,
-        summarizer: `You are an assistant tasked with analyzing a text provided by the user. Your objective is to evaluate each sentence for complexity and verbosity. Create a JSON object where each entry corresponds to a sentence from the text, structured with two key components: 'excerpt' and 'proposition'. For the 'excerpt' key, include the exact text of the sentence. For the 'proposition' key, provide a simplified version of the sentence that reduces its complexity and verbosity while maintaining the original meaning. This simplification should serve as a direct, actionable suggestion to help the user make their text clearer and more accessible.`
+        devilsAdvocate: `You're an assistant tasked with writing a text analysis in the form of a JSON file. Each entry should include 'excerpt', 'proposition', and 'importance'. For 'excerpt', directly quote the text, ensuring accuracy and no alterations. For 'proposition', create a counterpoint or alternative perspective, designed to stimulate critical thinking. For 'importance', assign a numerical value reflecting the proposition's significance. Ensure all excerpts are exact, direct quotes from the provided text.`,
+        summarizer: `You're an assistant tasked with writing a text analysis in the form of a JSON file. Each entry should include 'excerpt', 'proposition', and 'importance'. For 'excerpt', include the exact text of the sentence without any alterations. For 'proposition', distill the essential message of the sentence into a clear, concise summary that maintains the original meaning. Aim to simplify the sentence's complexity and verbosity, providing a straightforward, accessible summary. For 'importance', assign a numerical value that reflects the summary's significance in the broader context of the text. Ensure the 'proposition' is a coherent, concise summary that encapsulates the key points while remaining true to the original context.`
+
     };
 
     const selectedPrompt = prompts[taskType];
@@ -39,12 +40,16 @@ async function mistral(taskType, input) {
                 },
                 "proposition": {
                     "type": "string"
+                },
+                "importance": {
+                    "type": "string"
                 }
             },
-            "required": ["excerpt", "proposition"],
+            "required": ["excerpt", "proposition", "importance"],
             "additionalProperties": false
         }
     });
+    
 
 
       const context = new LlamaContext({ model, batchSize: 4096 });
@@ -81,7 +86,6 @@ async function mistral(taskType, input) {
     
         try {
             const parsedAnswer = JSON.parse(answer);
-            console.log('Parsed answer:', parsedAnswer);
             return parsedAnswer;
         } catch (error) {
             return 'Error parsing JSON: ' + error
