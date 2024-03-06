@@ -10,7 +10,7 @@ const fileSchema = mongoose.Schema({
   locatedIn: String,
   pendingSuggestions: Array,
   activeAssistants: [{
-    assistant: { type: mongoose.Schema.Types.ObjectId, ref: 'assistants' },
+    assistant: String,
     degreeOfIntervention: Number
   }]
 })
