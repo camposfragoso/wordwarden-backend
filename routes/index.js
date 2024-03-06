@@ -11,7 +11,8 @@ router.post('/mistral', async (req, res, next) => {
   try {
       const devil = await mistral('devilsAdvocate', req.body.answer);
       const sum = await mistral('summarizer', req.body.answer);
-      res.json({ devil, sum });
+      const elaborator = await mistral('elaborator', req.body.answer);
+      res.json({ devil, sum, elaborator });
   } catch (error) {
       next(error);
   }
