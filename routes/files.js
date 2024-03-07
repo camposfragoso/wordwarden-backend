@@ -42,7 +42,7 @@ router.post("/",(req,res)=>{
 //GET : get collection infos of all of one user’s files
 
 router.get("/:userId",(req, res)=>{
-  File.findById(req.params.userId).then((data)=>{
+  File.find({author:req.params.userId}).then((data)=>{
     if(data===null){
       res.json({result : false, error:"could not find files for this user"})
     }else{
@@ -56,6 +56,19 @@ router.get("/:userId",(req, res)=>{
         }
       })
       res.json({result:true, data:array})
+    }
+  })
+})
+
+//GET : get content of one file
+
+router.get("/:fileId",(req, res)=>{
+  File.findById(req.params.fileId).then(data=>{
+    console.log(data)
+    if(data===null){
+      res.json({result:false, error:"file not found"})
+    }else{
+      res.json({result:true, data:data})
     }
   })
 })

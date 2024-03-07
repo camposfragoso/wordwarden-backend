@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     fontSize : {type : Number, default : 2}
   },
   defaultActiveAssistants : [{
-    assistant: { type: mongoose.Schema.Types.ObjectId, ref: 'assistants' },
+    assistant: String,
     degreeOfIntervention: Number
   }]
 });
