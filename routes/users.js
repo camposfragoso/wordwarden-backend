@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 
 //POST : signup
 router.post('/signup', (req, res) => {
-  if (!checkBody(req.body, ['email', 'password'])) {
+  if (!checkBody(req.body, ['email', 'password', "lastName","firstName"])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
   }
@@ -24,7 +24,8 @@ router.post('/signup', (req, res) => {
       const hash = bcrypt.hashSync(req.body.password, 10);
 
       const newUser = new User({
-        username: req.body.username,
+        firstName: req.body.firstName,
+        lastName : req.body.lastName,
         fieldOfWork : req.body.fieldOfWork,
         email : req.body.email,
         password: hash,
@@ -33,8 +34,8 @@ router.post('/signup', (req, res) => {
 
       });
 
-      newUser.save().then((data) => {
-        res.json({ result: true, user: data });
+      newUser.save().then(() => {
+        res.json({ result: true, user: newUser });
       });
     } else{
       res.json({ result: false, error: 'User already exists' });
