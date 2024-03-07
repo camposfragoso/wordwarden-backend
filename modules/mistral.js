@@ -1,19 +1,14 @@
 const path = require('path');
+const {prompts} = require('../modules/prompts')
 
 let LlamaModel, LlamaGrammar, LlamaContext, LlamaChatSession, LlamaJsonSchemaGrammar;
 
 async function mistral(taskType, input) {
 
-    const prompts = {
-        devilsAdvocate: `You're an assistant tasked with writing a text analysis in the form of a JSON file. Each entry should include 'excerpt', 'proposition', and 'importance'. For 'excerpt', directly quote the text, ensuring accuracy and no alterations. For 'proposition', create a counterpoint or alternative perspective, designed to stimulate critical thinking. For 'importance', assign a numerical value reflecting the proposition's significance. This numerical value should range from 1 to 10. Ensure all excerpts are exact, direct quotes from the provided text.`,
-        summarizer: `You are an assistant tasked with analyzing a text provided by the user. Your objective is to evaluate each sentence for complexity and verbosity. Create a JSON object where each entry corresponds to a sentence from the text, structured with two key components: 'excerpt' and 'proposition'. For the 'excerpt' key, include the exact text of the sentence. For the 'proposition' key, provide a simplified version of the sentence that reduces its complexity and verbosity while maintaining the original meaning. This simplification should serve as a direct, actionable suggestion to help the user make their text clearer and more accessible. For 'importance', assign a numerical value reflecting the proposition's significance. This numerical value should range from 1 to 10.`,
-        elaborator: `You're an assistant tasked with writing a text analysis in the form of a JSON file. Each entry should include 'sentence', 'elaboration', and 'importance'. For 'sentence', directly quote the text, focusing on sentences that are brief or lacking in detail. For 'elaboration', provide a more developed and comprehensive version of the sentence, adding depth and context to enrich the reader's understanding. For 'importance', assign a numerical value reflecting the proposition's significance. This numerical value should range from 1 to 10.  Ensure the 'elaboration' offers a meaningful expansion on the original sentence.`
-    };
-
     const selectedPrompt = prompts[taskType];
 
     if (!selectedPrompt) {
-        throw new Error('Invalid task type specified');
+        throw new Error('Invalid task specified');
     }
 
 	if (!LlamaModel || !LlamaGrammar || !LlamaContext || !LlamaChatSession || !LlamaJsonSchemaGrammar || !LlamaChatPromptWrapper) {

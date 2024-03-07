@@ -10,7 +10,7 @@ require('./models/connection');
 var indexRouter = require("./routes/index")
 var usersRouter = require("./routes/users") 
 var filesRouter = require("./routes/files")
-// var assistantsRouter = require("./routes/assistants")
+var llmRouter = require("./routes/llm")
 
 var app = express()
 
@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, "public")))
 
 app.use("/", indexRouter)
 app.use("/users", usersRouter) 
-// app.use("/assistants", assistantsRouter)
+app.use("/llm", llmRouter)
 app.use("/files", filesRouter)
 
 module.exports = app
