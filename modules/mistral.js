@@ -46,9 +46,7 @@ async function mistral(taskType, input) {
         }
     });
     
-
-
-      const context = new LlamaContext({ model, batchSize: 4096 });
+        const context = new LlamaContext({ model, batchSize: 4096 });
     
         class MyCustomChatPromptWrapper extends LlamaChatPromptWrapper {
         constructor() {
