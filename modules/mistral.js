@@ -70,7 +70,7 @@ async function mistral(taskType, input) {
         }
     }
     
-    const session = new LlamaChatSession({
+    let session = new LlamaChatSession({
         context,
         promptWrapper: new MyCustomChatPromptWrapper()
     });
@@ -79,13 +79,14 @@ async function mistral(taskType, input) {
           grammar,
           maxTokens: context.getContextSize(),
       });
-    
+
         try {
             const parsedAnswer = JSON.parse(answer);
             return parsedAnswer;
         } catch (error) {
             return 'Error parsing JSON: ' + error
         }
+
     
   }
 

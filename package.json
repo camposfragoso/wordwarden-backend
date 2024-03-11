@@ -15,7 +15,7 @@
     "mongoose": "^8.2.0",
     "morgan": "~1.9.1",
     "node-fetch": "2",
-    "uid2": "^1.0.0",
-    "node-llama-cpp": "^2.8.8"
+    "node-llama-cpp": "^2.8.8",
+    "uid2": "^1.0.0"
   }
 }

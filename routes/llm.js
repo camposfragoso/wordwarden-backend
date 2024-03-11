@@ -3,21 +3,16 @@ var router = express.Router();
 
 const {mistral} = require('../modules/mistral.js')
 
-router.post('/mistral', async (req, res, next) => {
+router.post('/mistral/:assistant', async (req, res, next) => {
 
-  const { assistants, input } = req.body
-
-  let results = {}
+  const { input } = req.body
+  const { assistant } = req.params
 
   try {
       
-      for (const assistant of assistants) {
-           
-          results[assistant] = await mistral(assistant, input);
-          
-        }
-
-      res.json({ results });
+      const result = await mistral(assistant, input);
+        
+      res.json(result);
 
   } catch (error) {
       next(error);
