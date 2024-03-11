@@ -2,34 +2,37 @@ var express = require("express")
 
 const File = require("../models/files")
 const User = require("../models/users")
+const Folder = require("../models/folders")
 
 require("../models/connection")
 
 
 var router = express.Router()
 
-//POST : create a new file
+//POST : save a new file
 
 router.post("/",(req,res)=>{
   File.find({title : req.body.title}).then((data)=>{
     if(data!==null){
 
       User.findOne({token : req.body.token}).then(data =>{
-        const author = data.id;
+        const author = data._id;
         
         const newFile = new File({
           content : req.body.content,
           author : author,
           title : req.body.title,
-          locatedIn : req.body.path,
           activeAssistants : data.defaultActiveAssistants
     
         })
     
-        newFile.save().then(()=>{
-          File.find({title : req.body.title}).then(data=>{
-            res.json({result : true, title : data.title})
-          })
+        newFile.save().then((newFile)=>{
+          console.log(newFile)
+         Folder.updateOne({_id:req.body.parentFolderId}, {$push:{files:newFile.id}}).then((data)=>{
+          // console.log(data)
+          res.json({result:true, id:newFile._id})
+
+         })
         })
       })
     }else{
@@ -41,23 +44,30 @@ router.post("/",(req,res)=>{
 
 //GET : get collection infos of all of one user’s files
 
-router.get("/:userId",(req, res)=>{
-  File.find({author:req.params.userId}).then((data)=>{
-    if(data===null){
-      res.json({result : false, error:"could not find files for this user"})
-    }else{
-      const array = data.map(el=>{
-        return {
-          creationDate : el.creationDate,
-          title : el.title,
-          activeAssistants : el.activeAssistants,
-          lastModified:el.lastModified,
-          contentLength : el.content.length
-        }
-      })
-      res.json({result:true, data:array})
-    }
+router.get("/:token",(req, res)=>{
+  User.findOne({token : req.params.token}).then((data)=>{
+    // console.log("voilà les données utilisateur",data)
+    const userId = data._id
+    // console.log(userId)
+    File.find({author:userId}).then((data)=>{
+      if(data===null){
+        res.json({result : false, error:"could not find files for this user"})
+      }else{
+        console.log(data)
+        const array = data.map(el=>{
+          return {
+            creationDate : el.creationDate,
+            title : el.title,
+            activeAssistants : el.activeAssistants,
+            lastModified:el.lastModified,
+            content : el.content
+          }
+        })
+        res.json({result:true, data:array})
+      }
+    })
   })
+  
 })
 
 //GET : get content of one file

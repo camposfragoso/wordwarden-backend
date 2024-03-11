@@ -3,6 +3,7 @@ const { checkBody } = require("../modules/checkbody");
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
 const User = require("../models/users")
+const Folder = require("../models/folders")
 require("../models/connection")
 
 var router = express.Router();
@@ -29,13 +30,24 @@ router.post('/signup', (req, res) => {
         fieldOfWork : req.body.fieldOfWork,
         email : req.body.email,
         password: hash,
-        token: uid2(32),
-        defaultActiveAssistants : req.body.defaultActiveAssistants
+        token: uid2(32)
 
       });
 
       newUser.save().then(() => {
-        res.json({ result: true, user: newUser });
+        User.findOne({token : newUser.token}).then((data)=>{
+
+          const newFolder = new Folder({
+            owner : data._id,
+            isMain : true
+          })
+          newFolder.save().then(()=>{
+            Folder.findOne({owner:data._id, isMain:true}).then((data)=>{
+
+              res.json({ result: true, user: newUser, folder: data });
+            })
+          })
+        })
       });
     } else{
       res.json({ result: false, error: 'User already exists' });
@@ -52,13 +64,15 @@ router.post('/signin', (req, res) => {
     return;
   }
 
-  User.findOne({ username: req.body.username }).then(data => {
-    if(data===null){
+  User.findOne({ email: req.body.email }).then(userData => {
+    if(userData===null){
       res.json({result:false, error:"user not found"})
     }else{
-
-      if (bcrypt.compareSync(req.body.password, data.password)) {
-        res.json({ result: true, token: data.token, username: data.username });
+      console.log(userData)
+      if (bcrypt.compareSync(req.body.password, userData.password)) {
+        Folder.findOne({isMain : true, owner : userData._id}).then((mainFolderData)=>{
+          res.json({ result: true, token: userData.token, firstName: userData.firstName, mainFolderId : mainFolderData._id });
+        })
       } else {
         res.json({ result: false, error: 'Wrong password' });
       }

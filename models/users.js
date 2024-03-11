@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const userSchema = mongoose.Schema({
   firstName: String,
   lastName:String,
@@ -12,10 +13,7 @@ const userSchema = mongoose.Schema({
     fontStyle : {type : String, default : "Garamond"},
     fontSize : {type : Number, default : 2}
   },
-  defaultActiveAssistants : [{
-    assistant: String,
-    degreeOfIntervention: Number
-  }]
+  defaultActiveAssistants : {type:[String], default:["ela","dev","sum"]}
 });
 
 const User = mongoose.model('users', userSchema);

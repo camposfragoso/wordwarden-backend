@@ -2,17 +2,13 @@ const mongoose = require('mongoose');
 
 const fileSchema = mongoose.Schema({
   //content type to change according to what tiptap returns
-  content: String,
+  content: {type : String, default:""},
   author: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   creationDate: { type: Date, default: Date.now },
   lastModified: {type : Date, default : Date.now},
-  title: String,
-  locatedIn: String,
+  title: {type : String, default : "New file"},
   pendingSuggestions: Array,
-  activeAssistants: [{
-    assistant: String,
-    degreeOfIntervention: Number
-  }]
+  activeAssistants:{type : [String], default :["ela","dev","sum"]}
 })
 
 const File = mongoose.model('files', fileSchema);

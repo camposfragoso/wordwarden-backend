@@ -11,6 +11,7 @@ var indexRouter = require("./routes/index")
 var usersRouter = require("./routes/users") 
 var filesRouter = require("./routes/files")
 var llmRouter = require("./routes/llm")
+var foldersRouter = require("./routes/folders")
 
 var app = express()
 
@@ -49,5 +50,6 @@ app.use("/", indexRouter)
 app.use("/users", usersRouter) 
 app.use("/llm", llmRouter)
 app.use("/files", filesRouter)
+app.use("/folders", foldersRouter)
 
 module.exports = app
