@@ -178,9 +178,9 @@
   integrity sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==
 
 "@octokit/plugin-paginate-graphql@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-paginate-graphql/-/plugin-paginate-graphql-4.0.0.tgz#b26024fa454039c18b948f13bf754ff86b89e8b9"
-  integrity sha512-7HcYW5tP7/Z6AETAPU14gp5H5KmCPT3hmJrS/5tO7HIgbwenYmgw4OY9Ma54FDySuxMwD+wsJlxtuGWwuZuItA==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-paginate-graphql/-/plugin-paginate-graphql-4.0.1.tgz#9c0b1145b93a2b8635943f497c127969d54512fc"
+  integrity sha512-R8ZQNmrIKKpHWC6V2gum4x9LG2qF1RxRjo27gjQcG3j+vf2tLsEfE7I/wRWEPzYMaenr1M+qDAtNcwZve1ce1A==
 
 "@octokit/plugin-paginate-rest@^9.0.0":
   version "9.2.1"
@@ -260,9 +260,9 @@
     aggregate-error "^3.1.0"
 
 "@types/aws-lambda@^8.10.83":
-  version "8.10.134"
-  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.134.tgz#8f65d86736839889194f7892b7bec6b8a7ec6fc3"
-  integrity sha512-cfv422ivDMO+EeA3N4YcshbTHBL+5lLXe+Uz+4HXvIcsCuWvqNFpOs28ZprL8NA3qRCzt95ETiNAJDn4IcC/PA==
+  version "8.10.136"
+  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.136.tgz#12a2af86b9123f4e4549992b27e1bf0dcf60d9f9"
+  integrity sha512-cmmgqxdVGhxYK9lZMYYXYRJk6twBo53ivtXjIUEFZxfxe4TkZTZBK3RRWrY2HjJcUIix0mdifn15yjOAat5lTA==
 
 "@types/btoa-lite@^1.0.0":
   version "1.0.2"
@@ -277,9 +277,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "20.11.24"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.24.tgz#cc207511104694e84e9fb17f9a0c4c42d4517792"
-  integrity sha512-Kza43ewS3xoLgCEpQrsT+xRo/EJej1y0kVYGiLFE1NEODXGzTfwiC6tXTLMQskn1X4/Rjlh0MQUvx9W+L9long==
+  version "20.11.25"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.25.tgz#0f50d62f274e54dd7a49f7704cc16bfbcccaf49f"
+  integrity sha512-TBHyJxk2b7HceLVGFcpAUjsa5zIdsPWlR6XHfyGzd0SFu+/NFgQgMAl96MSDZgQDvJAvV6BKsFOrt6zIL09JDw==
   dependencies:
     undici-types "~5.26.4"
 
