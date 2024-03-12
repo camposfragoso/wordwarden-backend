@@ -7,7 +7,7 @@ require("../models/connection")
 
 var router = express.Router()
 
-//POST : create a new folder for a given user, and in a given folder
+//POST : create a new folder for a given user, and in a given folder, save parent folder, and save it a as child folder
 
 router.post("/", (req,res)=>{
   User.findOne({token : req.body.token}).then(data=>{
@@ -15,10 +15,14 @@ router.post("/", (req,res)=>{
 
     const newFolder = new Folder({
       owner: userId,
-      parentFolder : req.body.parentFolderId,
+      parentFolder : req.body.parentFolder,
     })
-    newFolder.save().then(()=>{
-      res.json({result : true, message:"new File Created"})
+    newFolder.save().then((data)=>{
+      Folder.updateOne({_id:req.body.parentFolder},{$push:{childrenFolders:data.id}}).then(()=>{
+
+        // console.log(data)
+        res.json({result : true, message:"new folder Created"})
+      })
     })
   })
 })
@@ -29,8 +33,8 @@ router.post("/", (req,res)=>{
 router.get("/:parentFolderId/:token",(req,res)=>{
   User.findOne({token : req.params.token}).then(userData=>{
     if(userData!==null){
-      Folder.findById(req.params.parentFolderId).populate("files").then(data=>{
-        res.json({result : true, name : data.name, parentFolder : data.parentFolder, childrenFolders : data.childrenFolders, files : data.files})
+      Folder.findById(req.params.parentFolderId).populate("files").populate("childrenFolders").then(data=>{
+        res.json({result : true, id: req.params.parentFolderId, name : data.name, parentFolder : data.parentFolder, childrenFolders : data.childrenFolders, files : data.files})
       })
     }
   })
