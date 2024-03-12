@@ -16,6 +16,7 @@
     "morgan": "~1.9.1",
     "node-fetch": "2",
     "node-llama-cpp": "^2.8.8",
+    "openai": "^4.28.4",
     "uid2": "^1.0.0"
   }
 }
