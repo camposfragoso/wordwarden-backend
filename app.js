@@ -19,7 +19,6 @@ const cors = require("cors")
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Remplacee 'allowedOrigins' avec vos diffÃ©rents URLs front pouvant accÃ©der au Backend
     const allowedOrigins = [
       "http://localhost:3000",
       "http://localhost:3001",
