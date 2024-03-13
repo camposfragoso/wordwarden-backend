@@ -19,14 +19,13 @@ const cors = require("cors")
 
 const corsOptions = {
   origin: function (origin, callback) {
+    // Remplacee 'allowedOrigins' avec vos diffÃ©rents URLs front pouvant accÃ©der au Backend
     const allowedOrigins = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:4000",
-        "http://localhost:4001",
-        "https://www.tablee.app",
-        "http://192.168.0.35:4000",
-        "http://192.168.0.35:4001"
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:4000",
+      "http://localhost:4001",
+      "https://wordwarden-frontend-fawn.vercel.app"
     ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
