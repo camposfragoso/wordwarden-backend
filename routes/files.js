@@ -11,35 +11,40 @@ var router = express.Router()
 
 //POST : save a new file
 
-router.post("/",(req,res)=>{
-  File.find({title : req.body.title}).then((data)=>{
-    if(data!==null){
-
-      User.findOne({token : req.body.token}).then(data =>{
-        const author = data._id;
-        
-        const newFile = new File({
-          content : req.body.content,
-          author : author,
-          title : req.body.title,
-          activeAssistants : data.defaultActiveAssistants
-    
-        })
-    
-        newFile.save().then((newFile)=>{
-          console.log(newFile)
-         Folder.updateOne({_id:req.body.parentFolderId}, {$push:{files:newFile.id}}).then((data)=>{
-          // console.log(data)
-          res.json({result:true, id:newFile._id})
-
-         })
-        })
-      })
-    }else{
-      res.json({result : false, error:"already existing file with same title"})
+router.post("/", async (req, res) => {
+  try {
+    const file = await File.findById(req.body.fileId);
+    if (file) {
+      const date = new Date();
+      await File.updateOne(
+        { _id: req.body.fileId },
+        { title: req.body.title, content: req.body.content, lastModified: date }
+      );
+      return res.json({ result: true });
+    } else {
+      const user = await User.findOne({ token: req.body.token });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const author = user._id;
+      const newFile = new File({
+        content: req.body.content,
+        author: author,
+        title: req.body.title,
+        activeAssistants: user.defaultActiveAssistants,
+      });
+      const savedFile = await newFile.save();
+      await Folder.updateOne(
+        { _id: req.body.parentFolderId },
+        { $push: { files: savedFile._id } }
+      );
+      return res.json({ result: true, id: savedFile._id });
     }
-  })
-})
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 
 //GET : get collection infos of all of one user’s files
