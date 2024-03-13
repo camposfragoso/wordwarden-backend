@@ -17,23 +17,25 @@ var app = express()
 
 const cors = require("cors") 
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:4000",
+  "http://localhost:4001",
+  "https://wordwarden-frontend-fawn.vercel.app" 
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:4000",
-      "http://localhost:4001",
-      "https://wordwarden-frontend-fawn.vercel.app"
-    ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"], 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  credentials: true 
 };
 
 app.use(cors(corsOptions)) 
