@@ -22,7 +22,7 @@ async function mistral(taskType, input) {
       }
     
       const model = new LlamaModel({
-        modelPath: 'http://wordwarden-backend:10000/llm/capybarahermes-2.5-mistral-7b.Q4_K_M.gguf',
+        modelPath: path.join(__dirname, "..", "llm", "capybarahermes-2.5-mistral-7b.Q4_K_M.gguf"),
         /* temperature: 0.7 */
       });
 
