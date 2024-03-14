@@ -52,10 +52,9 @@ router.get("/:token",(req, res)=>{
   User.findOne({token:req.params.token}).then(userData=>{
     if(userData!==null){
       Folder.find({owner:userData._id}).populate("files").then(folderData=>{
-        console.log(folderData)
+    
         File.find({author:userData._id, isInFolder:false}).then(filesData=>{
-          console.log("voilà filesData : ",filesData)
-          console.log("voilà folderData",folderData)
+          
           res.json({result:true, folderData:folderData, filesData:filesData})
         })
       })
@@ -84,4 +83,33 @@ router.put("/", (req, res) => {
 })
 
 
+//UPDATE :change folder name
+
+router.put("/name",(req,res)=>{
+  Folder.updateOne({ _id: req.body.folderId },{name:req.body.newName}).then(data=>{
+    if(data.acknowledged){
+      res.json({result:true, newName : req.body.newName})
+    }
+  })
+})
+
+//DELETE: delete a folder by id
+
+router.delete("/", (req, res) => {
+  Folder.findById(req.body.folderId)
+    .then(folderData => {
+      const fileDeletePromises = folderData.files.map(fileId => File.deleteOne({ _id: fileId }));
+      return Promise.all(fileDeletePromises);
+    })
+    .then(() => {
+      return Folder.deleteOne({ _id: req.body.folderId });
+    })
+    .then(() => {
+      res.json({ result: true, message: "everything deleted" });
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ result: false, message: "an error occurred" });
+    });
+});
 module.exports = router
