@@ -21,8 +21,7 @@ async function openai(taskType, input) {
     {role: "user", content: input},
 ],
     response_format: { "type": "json_object" },
-    model: "gpt-4-turbo-preview",
-    seed: 'SEED',
+    model: "gpt-4-turbo-preview"
   });
 
   try {
