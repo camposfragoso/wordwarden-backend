@@ -13,16 +13,20 @@ var router = express.Router()
 
 router.post("/", async (req, res) => {
   try {
-    const file = await File.findById(req.body.fileId);
+
+    const file = await File.findById(req.body.id);
+
     if (file) {
       const date = new Date();
       await File.updateOne(
-        { _id: req.body.fileId },
+        { _id: req.body.id },
         { title: req.body.title, content: req.body.content, lastModified: date }
       );
-      return res.json({ result: true });
+      console.log('updating')
+      return res.json({ result: true, update: true });
+
     } else {
-      console.log("pour aller vers la création")
+      console.log("creating")
       const user = await User.findOne({ token: req.body.token });
       if (!user) {
         return res.status(404).json({ error: "User not found" });
