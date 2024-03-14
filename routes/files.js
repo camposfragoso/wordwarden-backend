@@ -23,30 +23,47 @@ router.post("/", async (req, res) => {
       console.log('new file')
       return res.json({ result: true });
     } else {
+      console.log("pour aller vers la création")
       const user = await User.findOne({ token: req.body.token });
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
       const author = user._id;
-      const newFile = new File({
-        content: req.body.content,
-        author: author,
-        title: req.body.title,
-        activeAssistants: user.defaultActiveAssistants,
-      });
+      let newFile;
+      if(req.body.parentFolderId){
+
+        newFile = new File({
+          content: req.body.content,
+          author: author,
+          title: req.body.title,
+          activeAssistants: user.defaultActiveAssistants,
+          isInFolder:true
+        });
+      }else{
+        newFile = new File({
+          content: req.body.content,
+          author: author,
+          title: req.body.title,
+          activeAssistants: user.defaultActiveAssistants,
+        });
+      }
       const savedFile = await newFile.save();
-      await Folder.updateOne(
-        { _id: req.body.parentFolderId },
-        { $push: { files: savedFile._id } }
-      );
-      console.log('file updated')
-      return res.json({ result: true, id: savedFile._id });
+      if(req.body.parentFolderId){
+        await Folder.updateOne(
+          { _id: req.body.parentFolderId },
+          { $push: { files: savedFile._id } }
+        );
+      }
+      return res.json({ result: true, data: savedFile });
     }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+//UPDATE : update the folder the filel belong to
+
 
 
 //GET : get collection infos of all of one user’s files
@@ -149,7 +166,7 @@ router.put("changeForce/:id",(req,res)=>{
 router.delete("/:id",(req,res)=>{
   File.deleteOne({_id:req.params.id}).then((data)=>{
     console.log(data)
-    if(data.ackcnowlegded===true){
+    if(data.deletedCount===1){
       res.json({result:true})
     }else{
       res.json({result:false, error:"no document deleted"})
@@ -162,7 +179,7 @@ router.delete("/:id",(req,res)=>{
 router.delete("/",(req, res)=>{
   File.deleteMany({author : req.body.authorId}).then((data)=>{
     console.log(data)
-    if(data.ackcnowlegded===true){
+    if(data===true){
       res.json({result : true})
     }else{
       res.json({result:false,error : "couldn’t delete documents"})
