@@ -20,6 +20,7 @@ router.post("/", async (req, res) => {
         { _id: req.body.fileId },
         { title: req.body.title, content: req.body.content, lastModified: date }
       );
+      console.log('new file')
       return res.json({ result: true });
     } else {
       const user = await User.findOne({ token: req.body.token });
@@ -38,6 +39,7 @@ router.post("/", async (req, res) => {
         { _id: req.body.parentFolderId },
         { $push: { files: savedFile._id } }
       );
+      console.log('file updated')
       return res.json({ result: true, id: savedFile._id });
     }
   } catch (error) {
