@@ -8,7 +8,8 @@ const fileSchema = mongoose.Schema({
   lastModified: {type : Date, default : Date.now},
   title: {type : String, default : "Untitled"},
   pendingSuggestions: Array,
-  activeAssistants:{type : [String], default :["ela","dev","sum"]}
+  activeAssistants:{type : [String], default :["ela","dev","sum"]},
+  isInFolder : {type:Boolean, default:false}
 })
 
 const File = mongoose.model('files', fileSchema);

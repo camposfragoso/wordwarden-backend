@@ -2,42 +2,86 @@ var express = require("express")
 
 const Folder = require("../models/folders")
 const User = require("../models/users")
+const File = require("../models/files")
 
 require("../models/connection")
 
 var router = express.Router()
 
-//POST : create a new folder for a given user, and in a given folder, save parent folder, and save it a as child folder
+//POST : create a new folder for a given user,in his main folder, save parent folder, and save it a as child folder
 
-router.post("/", (req,res)=>{
-  User.findOne({token : req.body.token}).then(data=>{
+router.post("/", (req, res) => {
+  User.findOne({ token: req.body.token }).then(data => {
+    // console.log(data._id)
     const userId = data._id;
+    console.log(userId)
 
     const newFolder = new Folder({
       owner: userId,
-      parentFolder : req.body.parentFolder,
     })
-    newFolder.save().then((data)=>{
-      Folder.updateOne({_id:req.body.parentFolder},{$push:{childrenFolders:data.id}}).then(()=>{
 
-        // console.log(data)
-        res.json({result : true, message:"new folder Created"})
-      })
+    newFolder.save().then((data) => {
+
+      res.json({ result: true, message: "new folder Created" })
+
     })
   })
 })
+
 
 
 //GET : get all datas from a given folder, for a given user
 
-router.get("/:parentFolderId/:token",(req,res)=>{
-  User.findOne({token : req.params.token}).then(userData=>{
-    if(userData!==null){
-      Folder.findById(req.params.parentFolderId).populate("files").populate("childrenFolders").then(data=>{
-        res.json({result : true, id: req.params.parentFolderId, name : data.name, parentFolder : data.parentFolder, childrenFolders : data.childrenFolders, files : data.files})
+router.get("/:parentFolderId/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then(userData => {
+    if (userData !== null) {
+      Folder.findById(req.params.parentFolderId).populate("files").populate("childrenFolders").then(data => {
+        res.json({ result: true, id: req.params.parentFolderId, name: data.name, parentFolder: data.parentFolder, childrenFolders: data.childrenFolders, files: data.files })
       })
+    }else{
+      res.json({result:false, error:"user not found"})
     }
   })
 })
+
+//il faut que quand j’arrive sur un page, je récupére tous les dossiers dont l’owner est la personne qui est connectée, et que je populate tous ces dossiers là, pas besoin de faire un fetch à chaque fois, je le fais seulement quand il y a une suppression, ou un changement de dossier
+
+//je fais donc ma nouvelle route get 
+
+router.get("/:token",(req, res)=>{
+  User.findOne({token:req.params.token}).then(userData=>{
+    if(userData!==null){
+      Folder.find({owner:userData._id}).populate("files").then(folderData=>{
+        console.log(folderData)
+        File.find({author:userData._id, isInFolder:false}).then(filesData=>{
+          console.log("voilà filesData : ",filesData)
+          console.log("voilà folderData",folderData)
+          res.json({result:true, folderData:folderData, filesData:filesData})
+        })
+      })
+    }else{
+      res.json({result:false,error:"user not found"})
+    }
+  })
+})
+
+//UPDATE : put a file to a parent
+
+router.put("/", (req, res) => {
+  // Folder.findOne({_id:req.body.})
+  Folder.updateOne({ _id: req.body.folderId }, { $push: { files: req.body.fileId } }).then(data => {
+    if (data.acknowledged) {
+      File.updateOne({_id:req.body.fileId},{isInFolder:true}).then(()=>{
+        File.findById(req.body.fileId).then((data)=>{
+
+          res.json({ result: true, isInFolder: data.isInFolder, message: `${req.body.fileId} moved to ${req.body.folderId}` })
+        })
+      })
+    } else {
+      res.json({ result: false, message: "could not move" })
+    }
+  })
+})
+
 
 module.exports = router
