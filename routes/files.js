@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
       const date = new Date();
       await File.updateOne(
         { _id: req.body.id },
-        { title: req.body.title, content: req.body.content, lastModified: date }
+        { title: req.body.title, content: req.body.content, llmAnswer: req.body.llmAnswer, lastModified: date }
       );
       console.log('updating')
       return res.json({ result: true, update: true });
@@ -34,9 +34,9 @@ router.post("/", async (req, res) => {
       const author = user._id;
       let newFile;
       if(req.body.parentFolderId){
-
         newFile = new File({
           content: req.body.content,
+          llmAnswer: req.body.llmAnswer,
           author: author,
           title: req.body.title,
           activeAssistants: user.defaultActiveAssistants,
@@ -45,6 +45,7 @@ router.post("/", async (req, res) => {
       }else{
         newFile = new File({
           content: req.body.content,
+          llmAnswer: req.body.llmAnswer,
           author: author,
           title: req.body.title,
           activeAssistants: user.defaultActiveAssistants,
