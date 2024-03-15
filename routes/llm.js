@@ -23,18 +23,21 @@ router.post('/mistral/:assistant', async (req, res, next) => {
 
 
 router.post('/openai/:assistant', async (req, res, next) => {
-
-  const { input } = req.body
-  const { assistant } = req.params
+  const { input } = req.body;
+  const { assistant } = req.params;
 
   try {
-      
-      const result = await openai(assistant, input);
-        
-      res.json(result);
+
+    const result = await openai(assistant, input);
+    
+    const filteredResults = result[assistant].filter(item => item.importance > 8);
+    
+    const filteredResponse = { [assistant]: filteredResults };
+    
+    res.json(filteredResponse);
 
   } catch (error) {
-      next(error);
+    next(error);
   }
 });
 
